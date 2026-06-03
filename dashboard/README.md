@@ -6,9 +6,9 @@ hazır gelir.
 
 ## Kullanım
 
-`index.html` dosyasına çift tıklayın, varsayılan tarayıcıda açılır.
+`index.html` dosyasına çift tıklayın, varsayılan tarayıcıda açılacaktır
 
 ## Notlar
 
 Bu dosya statik bir önizlemedir. Gerçek API'ye bağlı dinamik sürüm
-geliştirme yol haritasında, bkz. ana README.
+geliştirme yol haritasında yer almaktadır. 
