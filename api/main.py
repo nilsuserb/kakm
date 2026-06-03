@@ -4,11 +4,7 @@ import sqlite3
 from datetime import datetime, timedelta
 import statistics
 
-app = FastAPI(
-    title="KAKM API",
-    description="Kerzz Akıllı Karlılık Motoru — POS verisinden finansal sağlık analizi",
-    version="0.1.0",
-)
+app = FastAPI(title="KAKM API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -41,8 +37,6 @@ def root():
     return {
         "isim": "KAKM API",
         "surum": "0.1.0",
-        "tanim": "Kerzz Akıllı Karlılık Motoru — REST API",
-        "dokuman": "/docs",
         "endpoints": [
             "/subeler",
             "/menu-analizi/{sube_id}",
@@ -190,13 +184,13 @@ def menu_analizi(sube_id: int):
 
 
 SKOR_AGIRLIKLARI = {
-    "brut_kar_marji":      0.25,
-    "stok_devir_hizi":     0.15,
-    "personel_verimi":     0.15,
-    "cogs_sapma_sagligi":  0.15,
-    "ortalama_sepet":      0.10,
-    "yogun_saat":          0.10,
-    "atik_fire":           0.10,
+    "brut_kar_marji":     0.25,
+    "stok_devir_hizi":    0.15,
+    "personel_verimi":    0.15,
+    "cogs_sapma_sagligi": 0.15,
+    "ortalama_sepet":     0.10,
+    "yogun_saat":         0.10,
+    "atik_fire":          0.10,
 }
 
 
@@ -257,13 +251,13 @@ def _finansal_skor_hesapla(sube_id: int, conn) -> dict:
     atik_skor = max(0, min(100, 100 - sapma_orani * 600))
 
     bilesenler = {
-        "brut_kar_marji":      round(brut_marj_skor, 1),
-        "stok_devir_hizi":     round(devir_skor, 1),
-        "personel_verimi":     round(personel_skor, 1),
-        "cogs_sapma_sagligi":  round(cogs_skor, 1),
-        "ortalama_sepet":      round(sepet_skor, 1),
-        "yogun_saat":          round(yogun_skor, 1),
-        "atik_fire":           round(atik_skor, 1),
+        "brut_kar_marji":     round(brut_marj_skor, 1),
+        "stok_devir_hizi":    round(devir_skor, 1),
+        "personel_verimi":    round(personel_skor, 1),
+        "cogs_sapma_sagligi": round(cogs_skor, 1),
+        "ortalama_sepet":     round(sepet_skor, 1),
+        "yogun_saat":         round(yogun_skor, 1),
+        "atik_fire":          round(atik_skor, 1),
     }
 
     skor = sum(bilesenler[k] * SKOR_AGIRLIKLARI[k] for k in SKOR_AGIRLIKLARI)

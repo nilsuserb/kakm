@@ -175,7 +175,7 @@ for sube_id in range(1, 8):
         if gun == 28:
             gider_rows.append((sube_id, tarih, "personel", round(180000 * carpan, 2), "Aylık personel bordrosu"))
         if gun == 5:
-            gider_rows.append((sube_id, tarih, "kira", round(85000 * carpan, 2), "Aylık kira"))
+            gider_rows.append((sube_id, tarih, "kira", round(85000 * carpan, 2), "Aylık kirs"))
         if gun == 26:
             gider_rows.append((sube_id, tarih, "vergi", round(45000 * carpan, 2), "KDV beyanı"))
         if gun_offset % 7 == 3:

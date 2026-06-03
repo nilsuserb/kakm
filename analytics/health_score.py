@@ -1,18 +1,3 @@
-"""
-health_score.py — Finansal Sağlık Skoru (Modül 4)
-
-5 (aslında 7) bileşenli ağırlıklı skor. Bankaların kredi skoru mantığını
-restoran finansına uyarlar — POS verisinden tek bir sağlık göstergesi üretir.
-
-Bileşenler:
-  - Brüt kar marjı (%25)
-  - Stok devir hızı (%15)
-  - Personel verimi (%15)
-  - COGS sapma sağlığı (%15)
-  - Ortalama sepet (%10)
-  - Yoğun saat / büyüme (%10)
-  - Atık / fire (%10)
-"""
 
 import pandas as pd
 import numpy as np
@@ -33,33 +18,31 @@ AGIRLIKLAR = {
 
 
 def hesapla(sube_id: int) -> dict:
-    """
-    Şube için 0-100 arası sağlık skoru + bileşen detayları.
-    """
-    # Son 30 + önceki 30 gün karşılaştırması
+    
+   
     satis_son30 = dl.satislar(sube_id=sube_id, gun=30)
     satis_oncesi = dl.satislar(sube_id=sube_id, gun=60)
-    # Sadece önceki 30 gün
+    
     son_30_baslangic = pd.Timestamp(BUGUN - pd.Timedelta(days=30))
     satis_oncesi_30 = satis_oncesi[satis_oncesi["tarih"] < son_30_baslangic]
 
     if satis_son30.empty:
         return {"hata": "Veri yok"}
 
-    # ===== Brüt kar marjı =====
+   
     toplam_ciro = satis_son30["ciro"].sum()
     toplam_maliyet = (satis_son30["satilan_miktar"] * satis_son30["maliyet"]).sum()
     brut_marj = (toplam_ciro - toplam_maliyet) / toplam_ciro if toplam_ciro else 0
-    # %10 marj = 0 puan, %45 marj = 100 puan
+   
     brut_marj_skor = max(0, min(100, (brut_marj - 0.10) / 0.35 * 100))
 
-    # ===== Personel verimi (günlük ortalama ciro proxy) =====
+   
     gun_sayisi = satis_son30["tarih"].dt.date.nunique()
     gunluk_ort_ciro = toplam_ciro / max(gun_sayisi, 1)
-    # ₺20K/gün = 0 puan, ₺80K/gün = 100 puan
+    
     personel_skor = max(0, min(100, (gunluk_ort_ciro - 20000) / 60000 * 100))
 
-    # ===== Stok devir + COGS sapma =====
+   
     stok = dl.stok_hareketleri(sube_id=sube_id, gun=30)
     if not stok.empty:
         teorik = stok["teorik_tuketim"].sum()
@@ -70,24 +53,24 @@ def hesapla(sube_id: int) -> dict:
         sapma_orani = 0
         ort_gunluk_tuketim = 0
 
-    # Stok devir: 1500 TL/gün = 100 puan
+   
     devir_skor = min(100, (ort_gunluk_tuketim / 1500) * 100)
-    # COGS sapma: %2 = 90, %8 = 40, %12 = 0
+   
     cogs_skor = max(0, min(100, 100 - (sapma_orani - 0.02) * 800))
-    # Atık fire: aynı veri farklı normalize
+  
     atik_skor = max(0, min(100, 100 - sapma_orani * 600))
 
-    # ===== Ortalama sepet =====
-    # Basitleştirme: ciro / (satılan adet / ortalama sepet ürün sayısı)
+   
+    
     toplam_adet = satis_son30["satilan_miktar"].sum()
     ort_sepet = toplam_ciro / max(toplam_adet / 2.5, 1)
-    # 100 TL = 0, 380 TL = 100
+  
     sepet_skor = max(0, min(100, (ort_sepet - 100) / 280 * 100))
 
-    # ===== Büyüme (yoğun saat proxy) =====
+   
     onceki_ciro = satis_oncesi_30["ciro"].sum() if not satis_oncesi_30.empty else toplam_ciro
     buyume = (toplam_ciro - onceki_ciro) / onceki_ciro if onceki_ciro else 0
-    # %0 büyüme = 60 puan, +%20 = 100 puan, -%20 = 20 puan
+   
     yogun_skor = max(0, min(100, 60 + buyume * 200))
 
     bilesenler = {
@@ -150,7 +133,7 @@ def radar_ciz(sube_id: int, kaydet: str = None):
         return None
 
     bilesenler = r["bilesenler"]
-    # Türkçe okunabilir etiketler
+    
     etiketler_tr = {
         "brut_kar_marji":     "Brüt Kar Marjı",
         "stok_devir_hizi":    "Stok Devir",
@@ -162,12 +145,12 @@ def radar_ciz(sube_id: int, kaydet: str = None):
     }
     kategoriler = [etiketler_tr[k] for k in bilesenler.keys()]
     degerler = list(bilesenler.values())
-    # Radar kapanması için ilk değeri sona ekle
+   
     aci = np.linspace(0, 2 * np.pi, len(kategoriler), endpoint=False).tolist()
     degerler_r = degerler + [degerler[0]]
     aci_r = aci + [aci[0]]
 
-    # Renk skora göre
+   
     skor = r["skor"]
     if skor >= 80:   renk = "#10B981"
     elif skor >= 60: renk = "#14B8A6"
@@ -185,7 +168,7 @@ def radar_ciz(sube_id: int, kaydet: str = None):
     ax.set_yticklabels(["20", "40", "60", "80", "100"], fontsize=8, color="#94A3B8")
     ax.grid(True, linestyle=":", alpha=0.5)
 
-    # Merkeze büyük skor + etiket (figure-level text)
+    
     fig.text(0.5, 0.50, str(skor), ha="center", va="center",
              fontsize=48, fontweight="bold", color=renk)
     fig.text(0.5, 0.42, r["etiket"], ha="center", va="center",
@@ -206,7 +189,7 @@ def karsilastirma_ciz(kaydet: str = None):
 
     fig, ax = plt.subplots(figsize=(11, 6))
 
-    # Renk haritalama
+    
     def renk_func(skor):
         if skor >= 80:   return "#10B981"
         elif skor >= 60: return "#14B8A6"
@@ -217,7 +200,7 @@ def karsilastirma_ciz(kaydet: str = None):
     bars = ax.barh(df["sube"], df["skor"], color=renkler, alpha=0.85,
                    edgecolor="white", linewidth=1.5)
 
-    # Bar üstüne değer + etiket
+   
     for i, (bar, etiket, ciro) in enumerate(zip(bars, df["etiket"], df["gunluk_ciro"])):
         ax.text(bar.get_width() + 1, bar.get_y() + bar.get_height()/2,
                 f"{int(bar.get_width())} · {etiket}",
@@ -226,7 +209,7 @@ def karsilastirma_ciz(kaydet: str = None):
                 f"₺{ciro/1000:.0f}K/gün",
                 va="center", fontsize=9, color="white", fontweight="500")
 
-    # Skor bandları arka plan
+   
     ax.axvspan(0, 40, alpha=0.04, color="#EF4444", zorder=0)
     ax.axvspan(40, 60, alpha=0.04, color="#F59E0B", zorder=0)
     ax.axvspan(60, 80, alpha=0.04, color="#14B8A6", zorder=0)

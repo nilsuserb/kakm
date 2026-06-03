@@ -1,18 +1,5 @@
-"""
-cash_flow_forecast.py — Nakit Akışı Tahmini (Modül 3)
 
-14-30 günlük kasa pozisyonu tahmini. Olasılıklı (P10/P50/P90) güven aralığı sunar.
-
-Yöntem:
-  - Son 60 günlük günlük ciro serisi → günlük desen + haftalık mevsimsellik
-  - Yaklaşan giderler takvimi (maaş, kira, vergi) hesaba katılır
-  - Monte Carlo simülasyonu ile 1000 senaryo üretilir
-  - Her gün için P10/P50/P90 yüzdelikleri hesaplanır
-
-Not: Üretim versiyonunda Prophet kullanılır. Bu MVP'de Prophet ağır bir bağımlılık
-olduğu için manuel uygulanmış istatistiksel yaklaşım kullanılıyor — aynı çıktıyı verir.
-"""
-
+"""Nakit akışı tahmini. P10/P50/P90 güven aralığı ile 14-30 gün öngörü."""
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -62,7 +49,7 @@ def tahmin_et(sube_id: int, gun_sayisi: int = 14, gecmis_gun: int = 60) -> pd.Da
 
     desen = haftalik_desen(gecmis)
 
-    # Mevcut kasa tahmini — son 7 günlük kar birikimi
+    # Mevcut kasa tahmini 
     mevcut_kasa = gecmis.tail(7)["kar"].sum()
 
     # Yaklaşan giderler
@@ -74,7 +61,7 @@ def tahmin_et(sube_id: int, gun_sayisi: int = 14, gecmis_gun: int = 60) -> pd.Da
     ]
     gun_gider = giderler_df.groupby("tarih")["tutar"].sum().to_dict()
 
-    # Monte Carlo simülasyonları — her senaryo için kasa pozisyonu
+    # Monte carlo simülasyonları her senaryo için kasa pozisyonu
     np.random.seed(42)
     senaryolar = np.zeros((N_SIMULASYON, gun_sayisi + 1))
     senaryolar[:, 0] = mevcut_kasa
@@ -137,7 +124,7 @@ def ciz(sube_id: int, gun_sayisi: int = 14, kaydet: str = None):
     sube = dl.sube_adi(sube_id)
     fig, ax = plt.subplots(figsize=(13, 6))
 
-    # P10-P90 fan
+    # P10 P90 fan
     ax.fill_between(
         tahmin["tarih"], tahmin["p10"], tahmin["p90"],
         color="#14B8A6", alpha=0.15, label="P10-P90 (güven aralığı)",
@@ -160,7 +147,7 @@ def ciz(sube_id: int, gun_sayisi: int = 14, kaydet: str = None):
     # Sıfır çizgisi
     ax.axhline(0, color="black", linewidth=0.6, alpha=0.5)
 
-    # Gider günlerini işaretle
+    # Gider günlerini işaretlemek için
     gider_gunler = tahmin[tahmin["gider"] > 0]
     for _, r in gider_gunler.iterrows():
         ax.axvline(r["tarih"], color="#F59E0B", linewidth=0.5, alpha=0.4, linestyle=":")
@@ -181,7 +168,7 @@ def ciz(sube_id: int, gun_sayisi: int = 14, kaydet: str = None):
     ax.legend(loc="upper left", fontsize=9, frameon=True, framealpha=0.95)
     ax.grid(True, linestyle=":", alpha=0.3)
 
-    # X ekseni format
+    # X ekseni formatı
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%d %b"))
     ax.xaxis.set_major_locator(mdates.DayLocator(interval=2))
     fig.autofmt_xdate(rotation=30)

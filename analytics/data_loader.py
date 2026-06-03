@@ -10,7 +10,7 @@ from pathlib import Path
 from datetime import datetime
 
 
-# DB yolu — api klasöründeki ortak veritabanı
+# DB yolu api klasöründeki ortak veritabanı
 DB_PATH = Path(__file__).parent.parent / "api" / "kakm_restoran.db"
 BUGUN = datetime(2026, 5, 27)
 

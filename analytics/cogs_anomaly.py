@@ -1,11 +1,11 @@
 """
-cogs_anomaly.py — COGS Anomali Tespiti (Modül 2)
+cogs_anomaly.py — COGS Anomali Tespiti (
 
-Restoran finansının en sessiz sızıntısı: teorik tüketim ile gerçek tüketim
+Restoran finansı teorik tüketim ile gerçek tüketim
 arasındaki açık. İki yaklaşımla çözüyoruz:
 
   1. Eşik bazlı  : %5'in üstünde sapma → bayrak
-  2. Isolation Forest : Olağandışı sapma desenlerini ML ile yakala
+  2. Isolation Forest : Olağandışı sapma desenlerini ML ile yakalamak
 """
 
 import pandas as pd
@@ -57,7 +57,7 @@ def isolation_forest_anomaliler(sube_id: int, gun: int = 30, contamination: floa
     df["gun_adi"] = df["tarih"].dt.dayofweek
     df["hafta_sonu"] = (df["gun_adi"] >= 5).astype(int)
 
-    # ML için özellikler: sapma oranı + gün + ürün id (kategorik proxy)
+    # ML için özellikler: sapma oranı + gün + ürün id 
     X = df[["sapma_orani", "gun_adi", "hafta_sonu", "urun_id"]].values
 
     model = IsolationForest(
@@ -99,7 +99,7 @@ def ciz(sube_id: int, gun: int = 30, kaydet: str = None):
 
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(13, 8), gridspec_kw={"height_ratios": [1, 1.2]})
 
-    # PANEL 1: Günlük sapma trendi
+    # PANEL 1: Günlük sapma trendimiz
     renkler = ["#EF4444" if abs(x) >= 5 else "#94A3B8" for x in gunluk["sapma_yuzde"]]
     ax1.bar(gunluk["tarih"], gunluk["sapma_yuzde"], color=renkler, alpha=0.85, width=0.7)
     ax1.axhline(0, color="black", linewidth=0.5)

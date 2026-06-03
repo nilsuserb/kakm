@@ -1,13 +1,10 @@
 """
-menu_engineering.py — Menü Mühendisliği Matrisi (Modül 1)
+menu_engineering.py — Menü Mühendisliği  
 
-Kasavana-Smith menü mühendisliği matrisini POS verisinden üretir.
+Kasavana-Smith menü mühendisliği matrisini POS verisinden üretir
 Ürünleri popülerlik × katkı marjı eksenlerinde 4 kadrana ayırır:
 
-  Şampiyon     : yüksek satış + yüksek marj  → koru, görünür tut
-  Lokomotif    : yüksek satış + düşük marj   → maliyet pazarlığı
-  Gizli Cevher : düşük satış + yüksek marj   → tanıt, garsona ver
-  Zayıf Halka  : düşük satış + düşük marj    → menüden çıkar
+
 """
 
 import pandas as pd
@@ -39,7 +36,7 @@ def analiz_et(sube_id: int, gun: int = 90) -> pd.DataFrame:
         toplam_kar=("kar", "sum"),
     ).reset_index()
 
-    # Medyan eşik — uç değerlerden etkilenmesin
+    # Medyan eşik uç değerlersden etkilenmesin
     esik_satis = ozet["toplam_satis"].median()
     esik_kar = ozet["birim_kar"].median()
 
@@ -101,7 +98,7 @@ def ciz(ozet: pd.DataFrame, baslik: str = None, kaydet: str = None):
             zorder=3,
         )
 
-    # Ürün isimlerini noktaların üstüne yaz
+    # Ürün isimlerini noktaların üstüne yazmak
     for _, r in ozet.iterrows():
         ax.annotate(
             r["urun"],
@@ -150,7 +147,7 @@ def one_cikan_aksiyon(ozet: pd.DataFrame) -> str:
 
 
 if __name__ == "__main__":
-    # Hızlı test — komut satırından çalıştırılabilir
+    # Hızlı test 
     print("Menü Mühendisliği — Kadıköy Merkez")
     print("=" * 60)
     sonuc = analiz_et(sube_id=1)
