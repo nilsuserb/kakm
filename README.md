@@ -1,8 +1,8 @@
 # KAKM
 
-Kerzz Akıllı Karlılık Motoru. POS verisinden restoranın finansal sağlığını okuyan bir analitik motor önerisi.
+Kerzz Akıllı Karlılık Motoru. POS verisinden restoranın finansal sağlığını okuyan bir analitik motor önerisidir.
 
-Bu repo, Kerzz POS şirketine stajyer başvurum kapsamında geliştirdiğim projenin tamamını içeriyor. Üç ayrı klasör, üç farklı katman.
+Bu repo, Kerzz POS şirketine stajyer başvurum kapsamında geliştirdiğim projenin tamamını içermekte. Üç ayrı klasör, üç farklı katmandan oluşmaktadır.
 
 ## Neden?
 
@@ -30,7 +30,7 @@ Dört modülün üzerinde tek bir özet. 0 ile 100 arası finansal sağlık skor
 
 İki klasör için ayrı kurulum gerekiyor. API ve analytics paylaşımlı bir veritabanı kullanıyor. api/init_db.py çalıştırılınca ikisi de hazır oluyor.
 
-### 1. API'yi ayağa kaldır
+### 1. API'yi ayağa kaldırmanız için;
 
 ```bash
 cd api
@@ -42,7 +42,7 @@ uvicorn main:app --reload
 
 Sonra http://localhost:8000/docs adresinde Swagger UI açılır.
 
-### 2. Analitik motoru çalıştır
+### 2. Analitik motoru çalıştırmanız için;
 
 ```bash
 cd ../analytics
@@ -51,7 +51,7 @@ pip install -r requirements.txt
 jupyter notebook demo.ipynb
 ```
 
-### 3. Dashboard'u aç
+### 3. Dashboard'u açmak için;
 
 ```bash
 open dashboard/index.html
@@ -60,7 +60,7 @@ open dashboard/index.html
 Dashboard çift tıklayarak da açılır. İnternet bağlantısı veya sunucu gerektirmiyor. Tüm veri ve grafikler dosyanın içinde.
 
 
-## Teknoloji
+## Teknoloji;
 
 Backend. Python 3.10 ve üstü, FastAPI, SQLite.
 
@@ -71,7 +71,7 @@ Görsel. HTML ve Chart.js. Tek dosya, bağımlılıksız.
 
 ## Repo yapısı detay
 
-Her klasörün kendi README'si var, oradan daha derine inebilirsin.
+Her klasörün kendi README'si var, oradan daha derine inebilirsiniz.
 
 api klasörü. REST endpoint'leri, veri modeli, mimari notlar.
 
